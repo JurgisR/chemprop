@@ -170,7 +170,7 @@ class MoleculeModel(nn.Module):
         """
 
         output = self.ffn(self.encoder(batch, features_batch, atom_descriptors_batch,
-                                       atom_features_batch, bond_features_batch))
+                                       atom_features_batch, bond_features_batch)[0]) # MPN returns fingerprint, molecule indeces (for atomic embeddings)
 
         # Don't apply sigmoid during training b/c using BCEWithLogitsLoss
         if self.classification and not self.training:

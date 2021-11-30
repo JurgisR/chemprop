@@ -128,6 +128,9 @@ class MPNEncoder(nn.Module):
             atom_hiddens = torch.cat([atom_hiddens, atom_descriptors_batch], dim=1)     # num_atoms x (hidden + descriptor size)
             atom_hiddens = self.atom_descriptors_layer(atom_hiddens)                    # num_atoms x (hidden + descriptor size)
             atom_hiddens = self.dropout_layer(atom_hiddens)                             # num_atoms x (hidden + descriptor size)
+        
+        if self.aggregation == "none":
+            return atom_hiddens, a_scope # batched molecules, indeces of molecules
 
         # Readout
         mol_vecs = []
@@ -147,7 +150,7 @@ class MPNEncoder(nn.Module):
 
         mol_vecs = torch.stack(mol_vecs, dim=0)  # (num_molecules, hidden_size)
 
-        return mol_vecs  # num_molecules x hidden
+        return mol_vecs, None  # num_molecules x hidden, None for returning an empty element where previously the molecule indeces were returned
 
 
 class MPN(nn.Module):
@@ -251,11 +254,14 @@ class MPN(nn.Module):
                 raise NotImplementedError('Atom descriptors are currently only supported with one molecule '
                                           'per input (i.e., number_of_molecules = 1).')
 
-            encodings = [enc(ba, atom_descriptors_batch) for enc, ba in zip(self.encoder, batch)]
+            encodings = [enc(ba, atom_descriptors_batch)[0] for enc, ba in zip(self.encoder, batch)]
+            a_scope = [enc(ba, atom_descriptors_batch)[1] for enc, ba in zip(self.encoder, batch)]
         else:
-            encodings = [enc(ba) for enc, ba in zip(self.encoder, batch)]
+            encodings = [enc(ba)[0] for enc, ba in zip(self.encoder, batch)]
+            a_scope = [enc(ba)[1] for enc, ba in zip(self.encoder, batch)]
 
         output = reduce(lambda x, y: torch.cat((x, y), dim=1), encodings)
+        output_molecule_indeces = reduce(lambda x, y: torch.cat((x, y), dim=1), a_scope)
 
         if self.use_input_features:
             if len(features_batch.shape) == 1:
@@ -263,4 +269,4 @@ class MPN(nn.Module):
 
             output = torch.cat([output, features_batch], dim=1)
 
-        return output
+        return output, output_molecule_indeces
