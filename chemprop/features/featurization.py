@@ -84,9 +84,9 @@ def set_explicit_h(explicit_h: bool) -> None:
 
 def set_adding_hs(adding_hs: bool) -> None:
     """
-    Sets whether RDKit molecules will be constructed with adding the Hs to them.
+    Sets whether RDKit molecules will be constructed with explicit Hs.
 
-    :param adding_hs: Boolean whether to add Hs to the molecule.
+    :param explicit_h: Boolean whether to keep explicit Hs from input.
     """
     PARAMS.ADDING_H = adding_hs
 
@@ -114,6 +114,12 @@ def is_explicit_h() -> bool:
 def is_adding_hs() -> bool:
     r"""Returns whether to add explicit Hs to the mol"""
     return PARAMS.ADDING_H
+
+def is_adding_hs() -> bool:
+    r"""Returns whether to add explicit Hs to the mol"""
+    return PARAMS.ADDING_H
+    
+
     
 
 def is_reaction() -> bool:
