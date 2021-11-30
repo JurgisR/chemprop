@@ -45,6 +45,7 @@ class Featurization_parameters:
         self.REACTION_MODE = None
         self.EXPLICIT_H = False
         self.REACTION = False
+        self.ADDING_H = False
 
 # Create a global parameter object for reference throughout this module
 PARAMS = Featurization_parameters()
@@ -81,6 +82,14 @@ def set_explicit_h(explicit_h: bool) -> None:
     """
     PARAMS.EXPLICIT_H = explicit_h
 
+def set_adding_hs(adding_hs: bool) -> None:
+    """
+    Sets whether RDKit molecules will be constructed with explicit Hs.
+
+    :param explicit_h: Boolean whether to keep explicit Hs from input.
+    """
+    PARAMS.ADDING_H = adding_hs
+
 
 def set_reaction(reaction: bool, mode: str) -> None:
     """
@@ -101,6 +110,11 @@ def is_explicit_h() -> bool:
     r"""Returns whether to use retain explicit Hs"""
     return PARAMS.EXPLICIT_H
 
+
+def is_adding_hs() -> bool:
+    r"""Returns whether to add explicit Hs to the mol"""
+    return PARAMS.ADDING_H
+    
 
 def is_reaction() -> bool:
     r"""Returns whether to use reactions as input"""
