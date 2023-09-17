@@ -114,14 +114,7 @@ def is_explicit_h() -> bool:
 def is_adding_hs() -> bool:
     r"""Returns whether to add explicit Hs to the mol"""
     return PARAMS.ADDING_H
-
-def is_adding_hs() -> bool:
-    r"""Returns whether to add explicit Hs to the mol"""
-    return PARAMS.ADDING_H
     
-
-    
-
 def is_reaction() -> bool:
     r"""Returns whether to use reactions as input"""
     return PARAMS.REACTION
