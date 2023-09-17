@@ -254,11 +254,13 @@ class MPN(nn.Module):
                 raise NotImplementedError('Atom descriptors are currently only supported with one molecule '
                                           'per input (i.e., number_of_molecules = 1).')
 
-            encodings = [enc(ba, atom_descriptors_batch)[0] for enc, ba in zip(self.encoder, batch)]
-            a_scope = [enc(ba, atom_descriptors_batch)[1] for enc, ba in zip(self.encoder, batch)]
+            encoder_output = [enc(ba, atom_descriptors_batch) for enc, ba in zip(self.encoder, batch)]
         else:
-            encodings = [enc(ba)[0] for enc, ba in zip(self.encoder, batch)]
-            a_scope = [enc(ba)[1] for enc, ba in zip(self.encoder, batch)]
+            encoder_output = [enc(ba) for enc, ba in zip(self.encoder, batch)]
+        
+        encodings = [enc[0] for enc in encoder_output]
+        a_scope = [a_sco[1] for a_sco in encoder_output]
+
 
         output = reduce(lambda x, y: torch.cat((x, y), dim=1), encodings)
         output_molecule_indeces = reduce(lambda x, y: torch.cat((x, y), dim=1), a_scope)
